@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'total.dart';
+import 'form.dart';
+import 'dart:math' as math;
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,103 +18,219 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Splashscreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
+class Splashscreen extends StatelessWidget {
+  const Splashscreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    return AnimatedSplashScreen(
+      splash: Column(
+        children: [
+          Image.asset('images/digitalent.png'),
+          const Text(
+            'Your Daily Expends',
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+          )
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      backgroundColor: Colors.white,
+      nextScreen: HomepageWidget(),
+      splashIconSize: 250,
+      splashTransition: SplashTransition.slideTransition,
     );
+  }
+}
+
+class HomepageWidget extends StatefulWidget {
+  @override
+  _HomepageWidgetState createState() => _HomepageWidgetState();
+}
+
+class _HomepageWidgetState extends State<HomepageWidget> {
+  @override
+  Widget build(BuildContext context) {
+    // Figma Flutter Generator HomepageWidget - COMPONENT
+
+    return Container(
+        width: 414,
+        height: 896,
+        child: Stack(children: <Widget>[
+          Positioned(
+              top: -251,
+              left: -194.99989318847656,
+              child: Container(
+                  width: 1031.9998779296875,
+                  height: 975.7977905273438,
+                  child: Stack(children: <Widget>[
+                    Positioned(
+                        top: 0,
+                        left: 498.0648498535156,
+                        child: Transform.rotate(
+                            angle: -41.570921194640036 * (math.pi / 180),
+                            child: Image.asset('assets/images/ellipse8.svg',
+                                semanticsLabel: 'ellipse8'))),
+                    Positioned(
+                        top: 130,
+                        left: 279.9999084472656,
+                        child: SvgPicture.asset('assets/images/ellipse9.svg',
+                            semanticsLabel: 'ellipse9')),
+                    Positioned(
+                        top: 107,
+                        left: 415.9999084472656,
+                        child: SvgPicture.asset('assets/images/ellipse10.svg',
+                            semanticsLabel: 'ellipse10')),
+                    Positioned(
+                        top: 82,
+                        left: 482.9999084472656,
+                        child: SvgPicture.asset('assets/images/ellipse12.svg',
+                            semanticsLabel: 'ellipse12')),
+                  ]))),
+          Positioned(
+              top: 312,
+              left: 0,
+              child: Container(
+                  width: 414,
+                  height: 584,
+                  child: Stack(children: <Widget>[
+                    Positioned(
+                        top: 0,
+                        left: 0,
+                        child: SvgPicture.asset(
+                            'assets/images/backdropbase.svg',
+                            semanticsLabel: 'backdropbase')),
+                    Positioned(
+                        top: 297,
+                        left: 21,
+                        child: Text(
+                          'Deskripsi status keuangan',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Color.fromRGBO(149, 134, 168, 1),
+                              fontFamily: 'Arya',
+                              fontSize: 17,
+                              letterSpacing: -0.4099999964237213,
+                              fontWeight: FontWeight.normal,
+                              height: 1.5 /*PERCENT not supported*/
+                              ),
+                        )),
+                    Positioned(
+                        top: 192,
+                        left: 44,
+                        child: Text(
+                          'Status Keuangan',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Color.fromRGBO(45, 12, 87, 1),
+                              fontFamily: 'Averia Sans Libre',
+                              fontSize: 34,
+                              letterSpacing: 0.4099999964237213,
+                              fontWeight: FontWeight.normal,
+                              height: 1.2058823529411764),
+                        )),
+                    Positioned(
+                        top: 64,
+                        left: 157,
+                        child: Container(
+                            width: 104,
+                            height: 104,
+                            child: Stack(children: <Widget>[
+                              Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  child: Container(
+                                      width: 104,
+                                      height: 104,
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(255, 255, 255, 1),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.elliptical(104, 104)),
+                                      ))),
+                              Positioned(
+                                  top: 32,
+                                  left: 32,
+                                  child: Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Color.fromRGBO(255, 255, 255, 1),
+                                      ),
+                                      child: Stack(children: <Widget>[
+                                        Positioned(
+                                            top: 0,
+                                            left: 2.43157958984375,
+                                            child: SvgPicture.asset(
+                                                'assets/images/vector.svg',
+                                                semanticsLabel: 'vector')),
+                                      ]))),
+                            ])))
+                    // ),Positioned(
+                    // top: 512,
+                    //left: 174,
+                    //child: null
+                    //),Positioned(
+                    //top: 424,
+                    //left: 20,
+                    //child: null
+                    //),
+                  ]))),
+          Positioned(
+              top: 134,
+              left: 37,
+              child: Text(
+                'Rp. 1.000.000',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontFamily: 'Averia Sans Libre',
+                    fontSize: 48,
+                    letterSpacing: 0.4099999964237213,
+                    fontWeight: FontWeight.normal,
+                    height: 0.8541666666666666),
+              )),
+          Positioned(
+              top: 44,
+              left: -16,
+              child: Container(
+                  width: 237,
+                  height: 41,
+                  child: Stack(children: <Widget>[
+                    Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Container(
+                            width: 237,
+                            height: 41,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(43),
+                                topRight: Radius.circular(43),
+                                bottomLeft: Radius.circular(43),
+                                bottomRight: Radius.circular(43),
+                              ),
+                              color: Color.fromRGBO(204, 255, 181, 1),
+                            ))),
+                    Positioned(
+                        top: 8.31884765625,
+                        left: 21.178722381591797,
+                        child: Text(
+                          'Your daily expenses',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Color.fromRGBO(111, 18, 231, 1),
+                              fontFamily: 'Averia Sans Libre',
+                              fontSize: 20,
+                              letterSpacing: 0.4099999964237213,
+                              fontWeight: FontWeight.normal,
+                              height: 2.05),
+                        )),
+                  ]))),
+        ]));
   }
 }
