@@ -1,86 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 void form(context) {
-  showDialog(
+  Alert(
     context: context,
-    builder: (context) {
-      return SimpleDialog(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: Row(
-              children: <Widget>[
-                const Expanded(
-                  child: Text(
-                    "Tambah pengeluaran",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
+    title: "Pengeluaran baru",
+    content: Column(
+      children: <Widget>[
+        TextField(
+          decoration: InputDecoration(
+            icon: Icon(
+              Icons.move_to_inbox_rounded,
+              color: Color.fromARGB(156, 87, 13, 184),
             ),
+            labelText: 'Nama',
           ),
-          const Divider(),
-          const Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              "Nama Lengkap",
+        ),
+        TextField(
+          obscureText: true,
+          decoration: InputDecoration(
+            icon: Text(
+              ' Rp',
+              style: TextStyle(
+                  color: Color.fromARGB(156, 87, 13, 184), fontSize: 15),
             ),
+            labelText: 'Harga',
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: TextField(
-              style: new TextStyle(
-                  fontSize: 14.0, height: 1.0, color: Colors.black),
-              decoration: new InputDecoration(
-                hintText: "Input nama lengkap",
-                border: OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(3.0)),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14.0, horizontal: 15.0),
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
-              "Kontak",
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: TextField(
-              style: new TextStyle(
-                  fontSize: 14.0, height: 1.0, color: Colors.black),
-              decoration: new InputDecoration(
-                hintText: "Input kontak",
-                border: OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(3.0)),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14.0, horizontal: 15.0),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
-            child: MaterialButton(
-              color: Colors.blue,
-              child: const Text(
-                "SIMPAN",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          )
-        ],
-      );
-    },
-  );
+        ),
+      ],
+    ),
+    buttons: [
+      DialogButton(
+        onPressed: () => Navigator.pop(context),
+        color: Color.fromRGBO(50, 168, 82, 10),
+        child: Text(
+          "SIMPAN",
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+      )
+    ],
+  ).show();
 }

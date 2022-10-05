@@ -149,7 +149,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     elevation: 3,
                                     padding: EdgeInsets.only(top: 4)),
                                 onPressed: () {
-                                  //buka form
+                                  form(context);
                                 },
                                 child: const Text('masukan pengeluaran',
                                     textAlign: TextAlign.center,
