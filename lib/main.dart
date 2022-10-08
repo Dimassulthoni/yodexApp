@@ -18,8 +18,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Yodex APP',
       home: Splashscreen(),
+      theme: ThemeData(
+          inputDecorationTheme: InputDecorationTheme(
+              focusedBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Color.fromARGB(156, 87, 13, 184))),
+              labelStyle: TextStyle(color: Color.fromARGB(156, 87, 13, 184))),
+          textSelectionTheme: TextSelectionThemeData(
+              cursorColor: Color.fromARGB(156, 87, 13, 184))),
     );
   }
 }

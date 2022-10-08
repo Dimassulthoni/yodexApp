@@ -6,7 +6,7 @@ void form(context) {
     context: context,
     title: "Pengeluaran baru",
     content: Column(
-      children: <Widget>[
+      children: const <Widget>[
         TextField(
           decoration: InputDecoration(
             icon: Icon(
@@ -32,7 +32,7 @@ void form(context) {
     buttons: [
       DialogButton(
         onPressed: () => Navigator.pop(context),
-        color: Color.fromRGBO(50, 168, 82, 10),
+        color: const Color.fromRGBO(50, 168, 82, 10),
         child: const Text(
           "SIMPAN",
           style: TextStyle(color: Colors.white, fontSize: 20),
