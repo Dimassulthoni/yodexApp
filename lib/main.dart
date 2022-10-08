@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:yodex/list.dart';
 import 'total.dart';
 import 'form.dart';
 import 'dart:math' as math;
@@ -59,7 +60,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
     return Scaffold(
         //background
         backgroundColor: Color.fromARGB(156, 87, 13, 184),
-        body: Stack(children: <Widget>[
+        body: SingleChildScrollView(
+            child: Stack(children: <Widget>[
           Padding(
               // group 1
               padding: EdgeInsets.only(top: 40),
@@ -79,7 +81,9 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                       child: Text('Your daily expenses',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.averiaSansLibre(
-                              fontSize: 20, fontWeight: FontWeight.normal))))),
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal,
+                              color: Color.fromARGB(156, 81, 3, 184)))))),
           Padding(
               //title
               padding: EdgeInsets.only(top: 119, left: 30),
@@ -97,7 +101,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
               child: Center(
                 child: Container(
                     padding: EdgeInsets.only(top: 10),
-                    constraints: BoxConstraints(minHeight: 50, minWidth: 380),
+                    constraints: BoxConstraints(minHeight: 460, minWidth: 380),
                     decoration: BoxDecoration(
                         color: Color.fromARGB(255, 243, 243, 243),
                         borderRadius: BorderRadius.only(
@@ -162,7 +166,11 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             height: 56,
                             child: TextButton(
                                 onPressed: () {
-                                  //buka rincian
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const listpage()));
                                 },
                                 child: const Text(
                                   'Rincian',
@@ -173,6 +181,6 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                           )
                         ])),
               )),
-        ]));
+        ])));
   }
 }

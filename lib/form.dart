@@ -33,7 +33,7 @@ void form(context) {
       DialogButton(
         onPressed: () => Navigator.pop(context),
         color: Color.fromRGBO(50, 168, 82, 10),
-        child: Text(
+        child: const Text(
           "SIMPAN",
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
