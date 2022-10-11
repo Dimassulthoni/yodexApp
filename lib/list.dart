@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:yodex/database/databaselist.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:yodex/detail_list.dart';
+import 'package:yodex/model/pengeluaran.dart';
 
 class listpage extends StatefulWidget {
   const listpage({Key? key}) : super(key: key);
@@ -7,8 +11,28 @@ class listpage extends StatefulWidget {
 }
 
 class _listpage extends State<listpage> {
+  late List<pengeluaran> list;
+  bool isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    refreshlist();
+  }
+
+  @override
+  void dispose() {
+    listdatabase.instance.close();
+    super.dispose();
+  }
+
+  Future refreshlist() async {
+    setState(() => isLoading = true);
+    this.list = await listdatabase.instance.readAllpengeluaran();
+    setState(() => isLoading = false);
+  }
+
   final pengeluaran = List<String>.generate(20, (i) => 'pengeluaran $i');
-  var sort = ['Nama', 'Waktu', 'Pengeluaran'];
+  var sortbutton = ['Nama', 'Waktu', 'Pengeluaran'];
   String dropdownvalue = 'Nama';
   @override
   Widget build(BuildContext context) {
@@ -58,7 +82,7 @@ class _listpage extends State<listpage> {
                 icon: const Icon(Icons.keyboard_arrow_down),
 
                 // Array list of items
-                items: sort.map((String items) {
+                items: sortbutton.map((String items) {
                   return DropdownMenuItem(
                     value: items,
                     child: Text(items),
@@ -76,25 +100,39 @@ class _listpage extends State<listpage> {
           ),
           SizedBox(
             height: 530,
-            child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: pengeluaran.length,
-
-                // display each item of the product list
-                itemBuilder: (context, index) {
-                  return Card(
-                    // In many cases, the key isn't mandatory
-                    key: ValueKey(pengeluaran[index]),
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
-                    child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(pengeluaran[index])),
-                  );
-                }),
-          )
+            child: isLoading
+                ? CircularProgressIndicator()
+                : list.isEmpty
+                    ? Text(
+                        'tidak ada pengeluaran',
+                        style: TextStyle(color: Colors.grey, fontSize: 24),
+                      )
+                    : buildlist(),
+          ),
         ],
       ),
     ));
   }
+
+  Widget buildlist() => StaggeredGridView.countBuilder(
+        padding: EdgeInsets.all(8),
+        itemCount: list.length,
+        staggeredTileBuilder: (index) => StaggeredTile.fit(2),
+        crossAxisCount: 4,
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        itemBuilder: (context, index) {
+          final list = list[index];
+          return GestureDetector(
+            onTap: () async {
+              await Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => listdetailpage(listId: list.id!),
+              ));
+              refreshlist();
+            },
+          );
+        },
+      );
 }
+
+void sortlist() {}
