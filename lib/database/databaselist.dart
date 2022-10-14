@@ -29,7 +29,6 @@ class DatabaseInstance {
     Directory databaseDirectory = await getApplicationDocumentsDirectory();
     String path = join(databaseDirectory.path, databaseName);
     print('database init');
-    print(databaseDirectory.path);
     return openDatabase(path, version: databaseVersion, onCreate: _onCreate);
   }
 

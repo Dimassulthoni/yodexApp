@@ -76,6 +76,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
   void initState() {
     databaseInstance = DatabaseInstance();
     initDatabase();
+    database.database();
     super.initState();
   }
 
@@ -86,7 +87,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
 
   final controller1 = TextEditingController();
   final controller2 = TextEditingController();
-
+  int _value = 1;
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -127,7 +128,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                               color: Color.fromARGB(156, 81, 3, 184)))))),
           Padding(
             //title
-            padding: EdgeInsets.only(top: 119, left: 30),
+            padding: EdgeInsets.only(top: 119),
+
             child: FutureBuilder(
                 future: databaseInstance!.totalPemasukan(),
                 builder: (context, snapshot) {
@@ -135,12 +137,15 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                     return Text("-");
                   } else {
                     if (snapshot.hasData) {
-                      return Text("Rp. ${snapshot.data.toString()}",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.averiaSansLibre(
-                              color: Color.fromRGBO(255, 255, 255, 1),
-                              fontSize: 48,
-                              fontWeight: FontWeight.normal));
+                      return Container(
+                        alignment: AlignmentDirectional.center,
+                        child: Text("Rp. ${snapshot.data.toString()}",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.averiaSansLibre(
+                                color: Color.fromRGBO(255, 255, 255, 1),
+                                fontSize: 48,
+                                fontWeight: FontWeight.normal)),
+                      );
                     } else {
                       return Text("0",
                           textAlign: TextAlign.center,
@@ -158,7 +163,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
               child: Center(
                 child: Container(
                     padding: EdgeInsets.only(top: 10),
-                    constraints: BoxConstraints(minHeight: 460, minWidth: 380),
+                    constraints: BoxConstraints(minHeight: 460, minWidth: 400),
                     decoration: BoxDecoration(
                         color: Color.fromARGB(255, 243, 243, 243),
                         borderRadius: BorderRadius.only(
@@ -228,6 +233,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                         ),
                                         TextField(
                                           //obscureText: true,
+                                          keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             icon: Text(
                                               ' Rp',
@@ -240,6 +246,15 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                           ),
                                           controller: controller2,
                                         ),
+                                        /* Radio(
+                                            groupValue: _value,
+                                            value: 1,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _value =
+                                                    int.parse(value.toString());
+                                              });
+                                            }), */
                                       ],
                                     ),
                                     buttons: [
@@ -247,12 +262,17 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                         onPressed: () async {
                                           int idInsert = await database.insert({
                                             'name': controller1.text,
+                                            'type': _value,
                                             'total': controller2.text,
                                             'created_at':
-                                                DateTime.now().toString()
+                                                DateTime.now().toString(),
+                                            'updated_at':
+                                                DateTime.now().toString(),
                                           });
+                                          print("sudah masuk : " +
+                                              idInsert.toString());
                                           Navigator.pop(context);
-                                          dispose();
+                                          setState(() {});
                                         },
                                         color: const Color.fromRGBO(
                                             50, 168, 82, 10),
