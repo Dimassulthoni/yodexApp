@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:yodex/database/databaselist.dart';
 import 'package:yodex/list.dart';
 import 'package:yodex/model/pengeluaran.dart';
 import 'total.dart';
@@ -56,16 +58,32 @@ class Splashscreen extends StatelessWidget {
 }
 
 class HomepageWidget extends StatefulWidget {
-  final pengeluaran? list;
-  const HomepageWidget({Key? key, this.list}) : super(key: key);
+  //final pengeluaran? list;
+  const HomepageWidget({Key? key}) : super(key: key);
   @override
   _HomepageWidgetState createState() => _HomepageWidgetState();
 }
 
 class _HomepageWidgetState extends State<HomepageWidget> {
-  final _formKey = GlobalKey<FormState>();
-  late String nama;
-  late int harga;
+  DatabaseInstance? databaseInstance;
+  DatabaseInstance database = DatabaseInstance();
+
+  Future _refresh() async {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    databaseInstance = DatabaseInstance();
+    initDatabase();
+    super.initState();
+  }
+
+  Future initDatabase() async {
+    await databaseInstance!.database();
+    setState(() {});
+  }
+
   final controller1 = TextEditingController();
   final controller2 = TextEditingController();
 
@@ -108,16 +126,32 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                               fontWeight: FontWeight.normal,
                               color: Color.fromARGB(156, 81, 3, 184)))))),
           Padding(
-              //title
-              padding: EdgeInsets.only(top: 119, left: 30),
-              child: Text(
-                'pengeluaran hari ini',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.averiaSansLibre(
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    fontSize: 48,
-                    fontWeight: FontWeight.normal),
-              )),
+            //title
+            padding: EdgeInsets.only(top: 119, left: 30),
+            child: FutureBuilder(
+                future: databaseInstance!.totalPemasukan(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("-");
+                  } else {
+                    if (snapshot.hasData) {
+                      return Text("Rp. ${snapshot.data.toString()}",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.averiaSansLibre(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 48,
+                              fontWeight: FontWeight.normal));
+                    } else {
+                      return Text("0",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.averiaSansLibre(
+                              color: Color.fromRGBO(255, 255, 255, 1),
+                              fontSize: 48,
+                              fontWeight: FontWeight.normal));
+                    }
+                  }
+                }),
+          ),
           Padding(
               //backdrop
               padding: EdgeInsets.only(top: 260),
@@ -210,7 +244,16 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     ),
                                     buttons: [
                                       DialogButton(
-                                        onPressed: () => Navigator.pop(context),
+                                        onPressed: () async {
+                                          int idInsert = await database.insert({
+                                            'name': controller1.text,
+                                            'total': controller2.text,
+                                            'created_at':
+                                                DateTime.now().toString()
+                                          });
+                                          Navigator.pop(context);
+                                          dispose();
+                                        },
                                         color: const Color.fromRGBO(
                                             50, 168, 82, 10),
                                         child: const Text(
@@ -222,12 +265,6 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                       )
                                     ],
                                   ).show();
-                                  Future addlist() async {
-                                    final list = pengeluaran(
-                                        name: nama,
-                                        total: harga,
-                                        createdAt: DateTime.now());
-                                  }
                                 },
                                 child: const Text('masukan pengeluaran',
                                     textAlign: TextAlign.center,

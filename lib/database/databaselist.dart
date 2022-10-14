@@ -1,102 +1,77 @@
-import 'dart:async';
+import 'dart:io';
 
-import 'package:flutter/widgets.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:yodex/model/pengeluaran.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
-class listdatabase {
-  static final listdatabase instance = listdatabase._init();
+class DatabaseInstance {
+  final String databaseName = "kelola_duit.db";
+  final int databaseVersion = 2;
 
-  static Database? _database;
-  listdatabase._init();
+  // Atribut di Model Transaksi
+  final String namaTabel = 'transaksi';
+  final String id = 'id';
+  final String type = 'type';
+  final String total = 'total';
+  final String name = 'name';
+  final String createdAt = 'created_at';
+  final String updatedAt = 'updated_at';
 
-  Future<Database> get database async {
+  Database? _database;
+  Future<Database> database() async {
     if (_database != null) return _database!;
-    _database = await _initDB('list.db');
+    _database = await _initDatabase();
     return _database!;
   }
 
-  Future<Database> _initDB(String filepath) async {
-    final dbpath = await getDatabasesPath();
-    final path = join(dbpath, filepath);
-    return await openDatabase(path, version: 1);
+  Future<Database> _initDatabase() async {
+    Directory databaseDirectory = await getApplicationDocumentsDirectory();
+    String path = join(databaseDirectory.path, databaseName);
+    print('database init');
+    print(databaseDirectory.path);
+    return openDatabase(path, version: databaseVersion, onCreate: _onCreate);
   }
 
-  Future _createDB(Database db, int version) async {
-    final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    final textType = 'TEXT NOT NULL';
-    final integerType = 'INTEGER NOT NULL';
-
-    await db.execute('''CREATE TABLE $tablepengeluaran(
-      ${expensesFields.id}$idType,
-      ${expensesFields.nama}$textType,
-      ${expensesFields.harga}$integerType,
-      ${expensesFields.time}$textType
-    )''');
+  Future _onCreate(Database db, int version) async {
+    await db.execute(
+        'CREATE TABLE ${namaTabel} ($id INTEGER PRIMARY KEY, $name TEXT NULL, $type INTEGER, $total INTEGER, $createdAt TEXT NULL, $updatedAt TEXT NULL)');
   }
 
-  Future<pengeluaran> create(pengeluaran expenses) async {
-    final db = await instance.database;
-
-    // final id = await db.rawInsert('INSERT INTO table_nama ($Columns) VALUES ($values)')
-    final id = await db.insert(tablepengeluaran, expenses.toJson());
-    return expenses.copy(id: id);
+  Future<List<TransaksiModel>> getAll() async {
+    final data = await _database!.query(namaTabel);
+    List<TransaksiModel> result =
+        data.map((e) => TransaksiModel.fromJson(e)).toList();
+    return result;
   }
 
-  Future<pengeluaran> readpengeluaran(int id) async {
-    final db = await instance.database;
-
-    final maps = await db.query(
-      tablepengeluaran,
-      columns: expensesFields.values,
-      where: '${expensesFields.id} = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.isNotEmpty) {
-      return pengeluaran.fromJson(maps.first);
-    } else {
-      throw Exception('ID $id not found');
-    }
+  Future<int> insert(Map<String, dynamic> row) async {
+    final query = await _database!.insert(namaTabel, row);
+    return query;
   }
 
-  Future<List<pengeluaran>> readAllpengeluaran() async {
-    final db = await instance.database;
-
-    final orderBy = '${expensesFields.time} ASC';
-    // final result =
-    //     await db.rawQuery('SELECT * FROM $tableNotes ORDER BY $orderBy');
-
-    final result = await db.query(tablepengeluaran, orderBy: orderBy);
-
-    return result.map((json) => pengeluaran.fromJson(json)).toList();
+  Future<int> totalPemasukan() async {
+    final query = await _database!.rawQuery(
+        "SELECT SUM(total) as total FROM ${namaTabel} WHERE type = 1");
+    return int.parse(query.first['total'].toString());
   }
 
-  Future<int> update(pengeluaran note) async {
-    final db = await instance.database;
-
-    return db.update(
-      tablepengeluaran,
-      note.toJson(),
-      where: '${expensesFields.id} = ?',
-      whereArgs: [note.id],
-    );
+  Future<int> totalPengeluaran() async {
+    final query = await _database!.rawQuery(
+        "SELECT SUM(total) as total FROM ${namaTabel} WHERE type = 2");
+    return int.parse(query.first['total'].toString());
   }
 
-  Future<int> delete(int id) async {
-    final db = await instance.database;
+  Future<int> hapus(idTransaksi) async {
+    final query = await _database!
+        .delete(namaTabel, where: '$id = ?', whereArgs: [idTransaksi]);
 
-    return await db.delete(
-      tablepengeluaran,
-      where: '${expensesFields.id} = ?',
-      whereArgs: [id],
-    );
+    return query;
   }
 
-  Future close() async {
-    final db = await instance.database;
-
-    db.close();
+  Future<int> update(int idTransaksi, Map<String, dynamic> row) async {
+    final query = await _database!
+        .update(namaTabel, row, where: '$id = ?', whereArgs: [idTransaksi]);
+    return query;
   }
 }

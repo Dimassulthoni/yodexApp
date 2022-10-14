@@ -3,6 +3,7 @@ import 'package:yodex/database/databaselist.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:yodex/detail_list.dart';
 import 'package:yodex/model/pengeluaran.dart';
+import 'package:yodex/main.dart';
 
 class listPage extends StatefulWidget {
   const listPage({Key? key}) : super(key: key);
@@ -11,7 +12,8 @@ class listPage extends StatefulWidget {
 }
 
 class _listPage extends State<listPage> {
-  late List<pengeluaran> list;
+  DatabaseInstance? databaseInstance;
+  late List<TransaksiModel> list;
   bool isLoading = false;
   @override
   void initState() {
@@ -19,15 +21,9 @@ class _listPage extends State<listPage> {
     refreshlist();
   }
 
-  @override
-  void dispose() {
-    listdatabase.instance.close();
-    super.dispose();
-  }
-
   Future refreshlist() async {
     setState(() => isLoading = true);
-    this.list = await listdatabase.instance.readAllpengeluaran();
+    setState(() {});
     setState(() => isLoading = false);
   }
 
@@ -114,24 +110,19 @@ class _listPage extends State<listPage> {
     ));
   }
 
-  Widget buildlist() => StaggeredGridView.countBuilder(
-        padding: EdgeInsets.all(8),
-        itemCount: list.length,
-        staggeredTileBuilder: (index) => StaggeredTile.fit(2),
-        crossAxisCount: 4,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        itemBuilder: (context, index) {
-          final catatan = list[index];
-          return GestureDetector(
-            onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => listdetailpage(listId: catatan.id!),
-              ));
-              refreshlist();
-            },
-          );
-        },
+  Widget buildlist() => FutureBuilder<List<TransaksiModel>>(
+        future: databaseInstance!.getAll(),
+        builder: (context, snapshot) => Expanded(
+            child: ListView.builder(
+          padding: EdgeInsets.all(8),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(snapshot.data![index].name!),
+              subtitle: Text(snapshot.data![index].total! as String),
+            );
+          },
+        )),
       );
 }
 

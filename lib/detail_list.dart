@@ -15,7 +15,7 @@ class listdetailpage extends StatefulWidget {
 }
 
 class _listdetailpageState extends State<listdetailpage> {
-  late pengeluaran list;
+  late TransaksiModel list;
   bool isLoading = false;
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _listdetailpageState extends State<listdetailpage> {
 
   Future refreshlist() async {
     setState(() => isLoading = true);
-    this.list = await listdatabase.instance.readpengeluaran(widget.listId);
+    setState(() {});
     setState(() => isLoading = false);
   }
 
@@ -39,7 +39,7 @@ class _listdetailpageState extends State<listdetailpage> {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   children: [
                     Text(
-                      list.nama,
+                      list.name.toString(),
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 22,
@@ -47,7 +47,7 @@ class _listdetailpageState extends State<listdetailpage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      list.harga.toString(),
+                      list.total.toString(),
                       style: TextStyle(
                           color: Colors.grey,
                           fontSize: 22,
@@ -55,7 +55,7 @@ class _listdetailpageState extends State<listdetailpage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      DateFormat.yMMMd().format(list.createdTime),
+                      DateFormat.yMMMd().format(list.createdAt as DateTime),
                       style: TextStyle(color: Colors.grey),
                     )
                   ],
