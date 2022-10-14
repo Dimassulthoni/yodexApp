@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:yodex/list.dart';
+import 'package:yodex/model/pengeluaran.dart';
 import 'total.dart';
-import 'form.dart';
 import 'dart:math' as math;
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
       title: 'Yodex APP',
       home: Splashscreen(),
       theme: ThemeData(
-          inputDecorationTheme: InputDecorationTheme(
+          inputDecorationTheme: const InputDecorationTheme(
               focusedBorder: UnderlineInputBorder(
                   borderSide:
                       BorderSide(color: Color.fromARGB(156, 87, 13, 184))),
               labelStyle: TextStyle(color: Color.fromARGB(156, 87, 13, 184))),
-          textSelectionTheme: TextSelectionThemeData(
+          textSelectionTheme: const TextSelectionThemeData(
               cursorColor: Color.fromARGB(156, 87, 13, 184))),
     );
   }
@@ -48,7 +48,7 @@ class Splashscreen extends StatelessWidget {
         ],
       ),
       backgroundColor: Colors.white,
-      nextScreen: HomepageWidget(),
+      nextScreen: const HomepageWidget(),
       splashIconSize: 250,
       splashTransition: SplashTransition.slideTransition,
     );
@@ -56,15 +56,30 @@ class Splashscreen extends StatelessWidget {
 }
 
 class HomepageWidget extends StatefulWidget {
+  final pengeluaran? list;
+  const HomepageWidget({Key? key, this.list}) : super(key: key);
   @override
   _HomepageWidgetState createState() => _HomepageWidgetState();
 }
 
 class _HomepageWidgetState extends State<HomepageWidget> {
+  final _formKey = GlobalKey<FormState>();
+  late String nama;
+  late int harga;
+  final controller1 = TextEditingController();
+  final controller2 = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    controller1.dispose();
+    controller2.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator HomepageWidget - COMPONENT
-
     return Scaffold(
         //background
         backgroundColor: Color.fromARGB(156, 87, 13, 184),
@@ -161,7 +176,58 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     elevation: 3,
                                     padding: EdgeInsets.only(top: 4)),
                                 onPressed: () {
-                                  form(context);
+                                  Alert(
+                                    context: context,
+                                    title: "Pengeluaran baru",
+                                    content: Column(
+                                      children: <Widget>[
+                                        TextField(
+                                          decoration: InputDecoration(
+                                            icon: Icon(
+                                              Icons.move_to_inbox_rounded,
+                                              color: Color.fromARGB(
+                                                  156, 87, 13, 184),
+                                            ),
+                                            labelText: 'Nama',
+                                          ),
+                                          controller: controller1,
+                                        ),
+                                        TextField(
+                                          //obscureText: true,
+                                          decoration: InputDecoration(
+                                            icon: Text(
+                                              ' Rp',
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      156, 87, 13, 184),
+                                                  fontSize: 15),
+                                            ),
+                                            labelText: 'Harga',
+                                          ),
+                                          controller: controller2,
+                                        ),
+                                      ],
+                                    ),
+                                    buttons: [
+                                      DialogButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        color: const Color.fromRGBO(
+                                            50, 168, 82, 10),
+                                        child: const Text(
+                                          "SIMPAN",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
+                                      )
+                                    ],
+                                  ).show();
+                                  Future addlist() async {
+                                    final list = pengeluaran(
+                                        name: nama,
+                                        total: harga,
+                                        createdAt: DateTime.now());
+                                  }
                                 },
                                 child: const Text('masukan pengeluaran',
                                     textAlign: TextAlign.center,
@@ -178,7 +244,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              const listpage()));
+                                              const listPage()));
                                 },
                                 child: const Text(
                                   'Rincian',

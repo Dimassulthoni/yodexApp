@@ -4,13 +4,13 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:yodex/detail_list.dart';
 import 'package:yodex/model/pengeluaran.dart';
 
-class listpage extends StatefulWidget {
-  const listpage({Key? key}) : super(key: key);
+class listPage extends StatefulWidget {
+  const listPage({Key? key}) : super(key: key);
   @override
-  _listpage createState() => _listpage();
+  _listPage createState() => _listPage();
 }
 
-class _listpage extends State<listpage> {
+class _listPage extends State<listPage> {
   late List<pengeluaran> list;
   bool isLoading = false;
   @override
@@ -31,7 +31,7 @@ class _listpage extends State<listpage> {
     setState(() => isLoading = false);
   }
 
-  final pengeluaran = List<String>.generate(20, (i) => 'pengeluaran $i');
+  //final pengeluaran = List<String>.generate(20, (i) => 'pengeluaran $i');
   var sortbutton = ['Nama', 'Waktu', 'Pengeluaran'];
   String dropdownvalue = 'Nama';
   @override
@@ -122,11 +122,11 @@ class _listpage extends State<listpage> {
         mainAxisSpacing: 4,
         crossAxisSpacing: 4,
         itemBuilder: (context, index) {
-          final list = list[index];
+          final catatan = list[index];
           return GestureDetector(
             onTap: () async {
               await Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => listdetailpage(listId: list.id!),
+                builder: (context) => listdetailpage(listId: catatan.id!),
               ));
               refreshlist();
             },
