@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yodex/database/databaselist.dart';
@@ -8,6 +9,7 @@ import 'package:yodex/model/pengeluaran.dart';
 import 'total.dart';
 import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 void main() {
   runApp(const MyApp());
@@ -67,6 +69,8 @@ class HomepageWidget extends StatefulWidget {
 class _HomepageWidgetState extends State<HomepageWidget> {
   DatabaseInstance? databaseInstance;
   DatabaseInstance database = DatabaseInstance();
+  String formattedDate =
+      DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
 
   Future _refresh() async {
     setState(() {});
@@ -195,8 +199,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                 'status pengeluaran',
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.averiaSansLibre(
-                                    color: Color.fromARGB(156, 87, 13, 184),
-                                    fontSize: 34),
+                                    color: HexColor("2D0C57"), fontSize: 34),
                               )),
                           Container(
                             padding: EdgeInsets.all(20),
@@ -217,7 +220,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                 onPressed: () {
                                   Alert(
                                     context: context,
-                                    title: "Pengeluaran baru",
+                                    title: "Transaksi baru",
                                     content: Column(
                                       children: <Widget>[
                                         TextField(
@@ -264,10 +267,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                             'name': controller1.text,
                                             'type': _value,
                                             'total': controller2.text,
-                                            'created_at':
-                                                DateTime.now().toString(),
-                                            'updated_at':
-                                                DateTime.now().toString(),
+                                            'created_at': formattedDate,
+                                            'updated_at': formattedDate,
                                           });
                                           print("sudah masuk : " +
                                               idInsert.toString());
@@ -286,7 +287,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     ],
                                   ).show();
                                 },
-                                child: const Text('masukan pengeluaran',
+                                child: const Text('Masukan transaksi',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Color.fromRGBO(255, 255, 255, 1),
