@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:yodex/database/databaselist.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:yodex/detail_list.dart';
 import 'package:yodex/model/pengeluaran.dart';
-import 'package:yodex/main.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class listPage extends StatefulWidget {
   const listPage({Key? key}) : super(key: key);
+
   @override
   _listPage createState() => _listPage();
 }
 
 class _listPage extends State<listPage> {
   DatabaseInstance? databaseInstance;
+  //
+  final textkontrol = TextEditingController();
+  var all = [];
+  var items = [];
+
   //bool isLoading = false;
   Future _refresh() async {
     setState(() {});
@@ -21,8 +25,37 @@ class _listPage extends State<listPage> {
   @override
   void initState() {
     databaseInstance = DatabaseInstance();
+    databaseInstance!.getAll().then((daftar) {
+      setState(() {
+        all = daftar;
+        items = all;
+      });
+    });
     initDatabase();
     super.initState();
+  }
+
+  void filterSeach(String query) async {
+    var SearchList = all;
+    if (query.isNotEmpty) {
+      var ListData = [];
+      SearchList.forEach((item) {
+        var daftar = TransaksiModel.fromJson(item);
+        if (daftar.name!.toLowerCase().contains(query.toLowerCase())) {
+          ListData.add(item);
+        }
+      });
+      setState(() {
+        items = [];
+        items.addAll(ListData);
+      });
+      return;
+    } else {
+      setState(() {
+        items = [];
+        items = all;
+      });
+    }
   }
 
   Future initDatabase() async {
@@ -90,11 +123,21 @@ class _listPage extends State<listPage> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(27)),
                   border: Border.all(color: Colors.grey, width: 1)),
-              child: const TextField(
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    filterSeach(value);
+                  });
+                },
+                controller: textkontrol,
                 decoration: InputDecoration(
                     icon: Icon(
                       Icons.search_rounded,
                       color: Color.fromRGBO(45, 12, 87, 1),
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: textkontrol.clear,
+                      icon: Icon(Icons.clear),
                     ),
                     hintText: ('search'),
                     border: InputBorder.none),
@@ -127,17 +170,17 @@ class _listPage extends State<listPage> {
           ),
           FutureBuilder<List<TransaksiModel>>(
               future: databaseInstance!.getAll(),
-              builder: (context, snapshot) {
-                print('HASIL : ' + snapshot.data.toString());
-                if (snapshot.connectionState == ConnectionState.waiting) {
+              builder: (context, items) {
+                print('HASIL : ' + items.data.toString());
+                if (items.connectionState == ConnectionState.waiting) {
                   return Text("Loading");
                 } else {
-                  if (snapshot.hasData) {
+                  if (items.hasData) {
                     return SizedBox(
                       height: 450,
                       child: Expanded(
                           child: ListView.builder(
-                        itemCount: snapshot.data!.length,
+                        itemCount: items.data!.length,
                         itemBuilder: (context, index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -150,19 +193,31 @@ class _listPage extends State<listPage> {
                               ),
                               trailing: Wrap(
                                 children: [
-                                  Text(snapshot.data![index].createdAt!),
+                                  Text(items.data![index].createdAt!),
                                   IconButton(
                                       onPressed: () {
                                         showAlertDialog(
-                                            context, snapshot.data![index].id!);
+                                            context, items.data![index].id!);
                                       },
                                       icon:
                                           Icon(Icons.delete, color: Colors.red))
                                 ],
                               ),
-                              title: Text(snapshot.data![index].name!),
+                              title: Text(items.data![index].name!),
                               subtitle:
-                                  Text(snapshot.data![index].total!.toString()),
+                                  Text(items.data![index].total!.toString()),
+                              onTap: () => Alert(
+                                  context: context,
+                                  title: "Detail",
+                                  content: Column(
+                                    children: <Widget>[
+                                      Text("Nama: " + items.data![index].name!),
+                                      Text("Harga: " +
+                                          items.data![index].total!.toString()),
+                                      Text("Waktu: " +
+                                          items.data![index].createdAt!)
+                                    ],
+                                  )),
                             ),
                           );
                         },
