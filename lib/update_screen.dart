@@ -95,6 +95,9 @@ class _UpdateScreenState extends State<UpdateScreen> {
                           'updated_at': DateTime.now().toString()
                         });
                         Navigator.pop(context);
+                        setState(() {
+                          
+                        });
                       },
                       child: Text("SIMPAN", style: TextStyle(fontSize: 20))),
                 ),

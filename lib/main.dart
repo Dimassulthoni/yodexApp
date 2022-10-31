@@ -72,18 +72,20 @@ class _HomepageWidgetState extends State<HomepageWidget> {
   String formattedDate =
       DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
   String batas = 'masukan limit pengeluaran';
+  int intBatas = 0;
 
   changeText() {
-    var intBatas = num.parse('${limit.toString()}');
-    var total = num.parse('${databaseInstance!.totalPemasukan().toString()}');
-    if (intBatas > total) {
+    int? intBatas = int.tryParse(limit.text);
+    int? total =
+        int.tryParse('${databaseInstance!.totalPemasukan().toString()}');
+    if (intBatas! > total!) {
       setState(() {
-        batas = 'aman';
+        batas = "aman";
       });
       return batas;
     } else {
       setState(() {
-        batas = 'pengeluaran telah melebihi limit';
+        batas = "pengeluaran telah melebihi limit";
       });
       return batas;
     }
@@ -108,7 +110,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
 
   final controller1 = TextEditingController();
   final controller2 = TextEditingController();
-  var limit = TextEditingController();
+  final limit = TextEditingController();
 
   int _value = 1;
   @override
@@ -291,9 +293,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     color: HexColor("2D0C57"), fontSize: 34),
                               )),
                           Container(
-                              padding: EdgeInsets.all(20),
-                              child: Text("$batas")),
-                          SizedBox(
+                              padding: EdgeInsets.all(20), child: Text(batas)),
+                          const SizedBox(
                             height: 60,
                           ),
                           SizedBox(

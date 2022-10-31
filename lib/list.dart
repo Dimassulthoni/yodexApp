@@ -19,6 +19,7 @@ class _listPage extends State<listPage> {
   TextEditingController search = TextEditingController();
   List<TransaksiModel> list = <TransaksiModel>[];
   List<TransaksiModel> filteredList = <TransaksiModel>[];
+  List<TransaksiModel> sortList = <TransaksiModel>[];
   bool doItJustOnce = false;
   final nama = TextEditingController();
   final harga = TextEditingController();
@@ -36,6 +37,24 @@ class _listPage extends State<listPage> {
     });
   }
 
+  void _sortListname(String value) {
+    setState(() {
+      list.sort((a, b) => a.name!.compareTo(b.name!));
+    });
+  }
+
+  void _sortListwaktu(String value) {
+    setState(() {
+      list.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    });
+  }
+
+  void _sortListpengeluaran(String value) {
+    setState(() {
+      list.sort((a, b) => b.total!.compareTo(a.total!));
+    });
+  }
+
   //bool isLoading = false;
   Future _refresh() async {
     setState(() {});
@@ -45,6 +64,7 @@ class _listPage extends State<listPage> {
   void initState() {
     databaseInstance = DatabaseInstance();
     initDatabase();
+    _refresh();
     super.initState();
   }
 
@@ -82,7 +102,7 @@ class _listPage extends State<listPage> {
 
   //final pengeluaran = List<String>.generate(20, (i) => 'pengeluaran $i');
   var sortbutton = ['Nama', 'Waktu', 'Pengeluaran'];
-  String dropdownvalue = 'Nama';
+  String dropdownvalue = 'Waktu';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,6 +171,15 @@ class _listPage extends State<listPage> {
                 onChanged: (String? newValue) {
                   setState(() {
                     dropdownvalue = newValue!;
+                    if (dropdownvalue == 'Waktu') {
+                      _sortListwaktu(dropdownvalue);
+                    }
+                    if (dropdownvalue == 'Nama') {
+                      _sortListname(dropdownvalue);
+                    }
+                    if (dropdownvalue == 'Pengeluaran') {
+                      _sortListpengeluaran(dropdownvalue);
+                    }
                   });
                 },
               ),
