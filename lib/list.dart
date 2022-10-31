@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:yodex/database/databaselist.dart';
 import 'package:yodex/model/pengeluaran.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:yodex/update_screen.dart';
 
 class listPage extends StatefulWidget {
   const listPage({Key? key}) : super(key: key);
@@ -12,10 +14,27 @@ class listPage extends StatefulWidget {
 
 class _listPage extends State<listPage> {
   DatabaseInstance? databaseInstance;
-  //
-  final textkontrol = TextEditingController();
-  var all = [];
-  var items = [];
+  DatabaseInstance database = DatabaseInstance();
+  String userSearchInput = "";
+  TextEditingController search = TextEditingController();
+  List<TransaksiModel> list = <TransaksiModel>[];
+  List<TransaksiModel> filteredList = <TransaksiModel>[];
+  bool doItJustOnce = false;
+  final nama = TextEditingController();
+  final harga = TextEditingController();
+  TransaksiModel edit = TransaksiModel();
+  String formattedDate =
+      DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
+  int _value = 1;
+
+  void _filterList(String value) {
+    setState(() {
+      filteredList = list
+          .where(
+              (text) => text.name!.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    });
+  }
 
   //bool isLoading = false;
   Future _refresh() async {
@@ -25,37 +44,8 @@ class _listPage extends State<listPage> {
   @override
   void initState() {
     databaseInstance = DatabaseInstance();
-    databaseInstance!.getAll().then((daftar) {
-      setState(() {
-        all = daftar;
-        items = all;
-      });
-    });
     initDatabase();
     super.initState();
-  }
-
-  void filterSeach(String query) async {
-    var SearchList = all;
-    if (query.isNotEmpty) {
-      var ListData = [];
-      SearchList.forEach((item) {
-        var daftar = TransaksiModel.fromJson(item);
-        if (daftar.name!.toLowerCase().contains(query.toLowerCase())) {
-          ListData.add(item);
-        }
-      });
-      setState(() {
-        items = [];
-        items.addAll(ListData);
-      });
-      return;
-    } else {
-      setState(() {
-        items = [];
-        items = all;
-      });
-    }
   }
 
   Future initDatabase() async {
@@ -125,18 +115,16 @@ class _listPage extends State<listPage> {
                   border: Border.all(color: Colors.grey, width: 1)),
               child: TextField(
                 onChanged: (value) {
-                  setState(() {
-                    filterSeach(value);
-                  });
+                  _filterList(value);
                 },
-                controller: textkontrol,
+                controller: search,
                 decoration: InputDecoration(
                     icon: Icon(
                       Icons.search_rounded,
                       color: Color.fromRGBO(45, 12, 87, 1),
                     ),
                     suffixIcon: IconButton(
-                      onPressed: textkontrol.clear,
+                      onPressed: search.clear,
                       icon: Icon(Icons.clear),
                     ),
                     hintText: ('search'),
@@ -170,55 +158,61 @@ class _listPage extends State<listPage> {
           ),
           FutureBuilder<List<TransaksiModel>>(
               future: databaseInstance!.getAll(),
-              builder: (context, items) {
-                print('HASIL : ' + items.data.toString());
-                if (items.connectionState == ConnectionState.waiting) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<TransaksiModel>> snapshot) {
+                print('HASIL : ' + snapshot.data.toString());
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text("Loading");
                 } else {
-                  if (items.hasData) {
+                  if (snapshot.hasData) {
+                    if (!doItJustOnce) {
+                      //You should define a bool like (bool doItJustOnce = false;) on your state.
+                      list = snapshot.data!;
+                      filteredList = list;
+                      doItJustOnce =
+                          !doItJustOnce; //this line helps to do just once.
+                    }
                     return SizedBox(
                       height: 450,
                       child: Expanded(
                           child: ListView.builder(
-                        itemCount: items.data!.length,
-                        itemBuilder: (context, index) {
+                        itemCount: filteredList.length,
+                        itemBuilder: (BuildContext context, int index) {
                           return Container(
                             decoration: BoxDecoration(
                                 border: Border(bottom: BorderSide()),
                                 color: Color.fromARGB(255, 221, 221, 221)),
                             child: ListTile(
-                              leading: Icon(
-                                Icons.move_to_inbox_rounded,
-                                color: Color.fromARGB(156, 87, 13, 184),
-                              ),
-                              trailing: Wrap(
-                                children: [
-                                  Text(items.data![index].createdAt!),
-                                  IconButton(
-                                      onPressed: () {
-                                        showAlertDialog(
-                                            context, items.data![index].id!);
-                                      },
-                                      icon:
-                                          Icon(Icons.delete, color: Colors.red))
-                                ],
-                              ),
-                              title: Text(items.data![index].name!),
-                              subtitle:
-                                  Text(items.data![index].total!.toString()),
-                              onTap: () => Alert(
-                                  context: context,
-                                  title: "Detail",
-                                  content: Column(
-                                    children: <Widget>[
-                                      Text("Nama: " + items.data![index].name!),
-                                      Text("Harga: " +
-                                          items.data![index].total!.toString()),
-                                      Text("Waktu: " +
-                                          items.data![index].createdAt!)
-                                    ],
-                                  )),
-                            ),
+                                leading: Icon(
+                                  Icons.move_to_inbox_rounded,
+                                  color: Color.fromARGB(156, 87, 13, 184),
+                                ),
+                                trailing: Wrap(
+                                  children: [
+                                    Text(filteredList[index].createdAt!),
+                                    IconButton(
+                                        onPressed: () {
+                                          showAlertDialog(
+                                              context, filteredList[index].id!);
+                                        },
+                                        icon: Icon(Icons.delete,
+                                            color: Colors.red))
+                                  ],
+                                ),
+                                title: Text(filteredList[index].name!),
+                                subtitle:
+                                    Text(filteredList[index].total!.toString()),
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => UpdateScreen(
+                                                transaksiMmodel:
+                                                    filteredList[index],
+                                              )))
+                                      .then((value) {
+                                    setState(() {});
+                                  });
+                                }),
                           );
                         },
                       )),

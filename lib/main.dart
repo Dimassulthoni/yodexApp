@@ -71,6 +71,23 @@ class _HomepageWidgetState extends State<HomepageWidget> {
   DatabaseInstance database = DatabaseInstance();
   String formattedDate =
       DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
+  String batas = 'masukan limit pengeluaran';
+
+  changeText() {
+    var intBatas = num.parse('${limit.toString()}');
+    var total = num.parse('${databaseInstance!.totalPemasukan().toString()}');
+    if (intBatas > total) {
+      setState(() {
+        batas = 'aman';
+      });
+      return batas;
+    } else {
+      setState(() {
+        batas = 'pengeluaran telah melebihi limit';
+      });
+      return batas;
+    }
+  }
 
   Future _refresh() async {
     setState(() {});
@@ -91,18 +108,21 @@ class _HomepageWidgetState extends State<HomepageWidget> {
 
   final controller1 = TextEditingController();
   final controller2 = TextEditingController();
+  var limit = TextEditingController();
+
   int _value = 1;
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    controller1.dispose();
-    controller2.dispose();
+    controller1.clear();
+    controller2.clear();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // Figma Flutter Generator HomepageWidget - COMPONENT
+    setState(() {});
     return Scaffold(
         //background
         backgroundColor: Color.fromARGB(156, 87, 13, 184),
@@ -111,25 +131,94 @@ class _HomepageWidgetState extends State<HomepageWidget> {
           Padding(
               // group 1
               padding: EdgeInsets.only(top: 40),
-              child: Container(
-                  width: 237,
-                  height: 41,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(0),
-                      topRight: Radius.circular(43),
-                      bottomLeft: Radius.circular(0),
-                      bottomRight: Radius.circular(43),
-                    ),
-                    color: Color.fromRGBO(204, 255, 181, 1),
-                  ),
-                  child: Center(
-                      child: Text('Your daily expenses',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.averiaSansLibre(
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal,
-                              color: Color.fromARGB(156, 81, 3, 184)))))),
+              child: Row(
+                children: [
+                  Container(
+                      width: 237,
+                      height: 41,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(43),
+                          bottomLeft: Radius.circular(0),
+                          bottomRight: Radius.circular(43),
+                        ),
+                        color: Color.fromRGBO(204, 255, 181, 1),
+                      ),
+                      child: Center(
+                          child: Text('Your daily expenses',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.averiaSansLibre(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                  color: Color.fromARGB(156, 81, 3, 184))))),
+                  Container(
+                      padding: EdgeInsets.only(left: 120),
+                      child: IconButton(
+                        onPressed: () {
+                          Alert(
+                            context: context,
+                            title: "Transaksi baru",
+                            content: Column(
+                              children: <Widget>[
+                                TextField(
+                                  decoration: InputDecoration(
+                                    icon: Icon(
+                                      Icons.move_to_inbox_rounded,
+                                      color: Color.fromARGB(156, 87, 13, 184),
+                                    ),
+                                    labelText: 'Nama',
+                                  ),
+                                  controller: controller1,
+                                ),
+                                TextField(
+                                  //obscureText: true,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    icon: Text(
+                                      ' Rp',
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(156, 87, 13, 184),
+                                          fontSize: 15),
+                                    ),
+                                    labelText: 'Harga',
+                                  ),
+                                  controller: controller2,
+                                ),
+                              ],
+                            ),
+                            buttons: [
+                              DialogButton(
+                                onPressed: () async {
+                                  int idInsert = await database.insert({
+                                    'name': controller1.text,
+                                    'type': _value,
+                                    'total': controller2.text,
+                                    'created_at': formattedDate,
+                                    'updated_at': formattedDate,
+                                  });
+                                  print("sudah masuk : " + idInsert.toString());
+                                  Navigator.pop(context);
+                                  setState(() {
+                                    controller1.clear();
+                                    controller2.clear();
+                                  });
+                                },
+                                color: const Color.fromRGBO(50, 168, 82, 10),
+                                child: const Text(
+                                  "SIMPAN",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                              )
+                            ],
+                          ).show();
+                        },
+                        icon: Icon(color: Colors.grey, Icons.add),
+                      ))
+                ],
+              )),
           Padding(
             //title
             padding: EdgeInsets.only(top: 119),
@@ -202,9 +291,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     color: HexColor("2D0C57"), fontSize: 34),
                               )),
                           Container(
-                            padding: EdgeInsets.all(20),
-                            child: Text('deskripsi status keuangan'),
-                          ),
+                              padding: EdgeInsets.all(20),
+                              child: Text("$batas")),
                           SizedBox(
                             height: 60,
                           ),
@@ -220,20 +308,9 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                 onPressed: () {
                                   Alert(
                                     context: context,
-                                    title: "Transaksi baru",
+                                    title: "Batasi Pengeluaran",
                                     content: Column(
                                       children: <Widget>[
-                                        TextField(
-                                          decoration: InputDecoration(
-                                            icon: Icon(
-                                              Icons.move_to_inbox_rounded,
-                                              color: Color.fromARGB(
-                                                  156, 87, 13, 184),
-                                            ),
-                                            labelText: 'Nama',
-                                          ),
-                                          controller: controller1,
-                                        ),
                                         TextField(
                                           //obscureText: true,
                                           keyboardType: TextInputType.number,
@@ -245,35 +322,17 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                                       156, 87, 13, 184),
                                                   fontSize: 15),
                                             ),
-                                            labelText: 'Harga',
+                                            labelText: 'Limit',
                                           ),
-                                          controller: controller2,
+                                          controller: limit,
                                         ),
-                                        /* Radio(
-                                            groupValue: _value,
-                                            value: 1,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _value =
-                                                    int.parse(value.toString());
-                                              });
-                                            }), */
                                       ],
                                     ),
                                     buttons: [
                                       DialogButton(
-                                        onPressed: () async {
-                                          int idInsert = await database.insert({
-                                            'name': controller1.text,
-                                            'type': _value,
-                                            'total': controller2.text,
-                                            'created_at': formattedDate,
-                                            'updated_at': formattedDate,
-                                          });
-                                          print("sudah masuk : " +
-                                              idInsert.toString());
+                                        onPressed: () {
+                                          changeText();
                                           Navigator.pop(context);
-                                          setState(() {});
                                         },
                                         color: const Color.fromRGBO(
                                             50, 168, 82, 10),
@@ -287,7 +346,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     ],
                                   ).show();
                                 },
-                                child: const Text('Masukan transaksi',
+                                child: const Text('Masukan limit',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Color.fromRGBO(255, 255, 255, 1),

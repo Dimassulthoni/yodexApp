@@ -1,9 +1,4 @@
 class TransaksiModel {
-  /*
-  tipe
-  1 -> pemasukan
-  2 -> pengeluaran
-  */
   int? id, type, total;
   String? name, createdAt, updatedAt;
 
