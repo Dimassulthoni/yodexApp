@@ -44,6 +44,14 @@ class DatabaseInstance {
     return result;
   }
 
+  Future<List<TransaksiModel>> search(String keyword) async {
+    List<Map<String, dynamic>> data = await _database!
+        .query(namaTabel, where: '$name LIKE ?', whereArgs: ['%$keyword%']);
+    List<TransaksiModel> search =
+        data.map((search) => TransaksiModel.fromJson(search)).toList();
+    return search;
+  }
+
   Future<int> insert(Map<String, dynamic> row) async {
     final query = await _database!.insert(namaTabel, row);
     return query;

@@ -28,14 +28,14 @@ class _listPage extends State<listPage> {
       DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
   int _value = 1;
 
-  void _filterList(String value) {
-    setState(() {
-      filteredList = list
-          .where(
-              (text) => text.name!.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-    });
-  }
+  //void _filterList(String value) {
+  //  setState(() {
+  //    filteredList = list
+  //        .where(
+  //            (text) => text.name!.toLowerCase().contains(value.toLowerCase()))
+  //        .toList();
+  //  });
+  //}
 
   void _sortListname(String value) {
     setState(() {
@@ -105,6 +105,7 @@ class _listPage extends State<listPage> {
   //final pengeluaran = List<String>.generate(20, (i) => 'pengeluaran $i');
   var sortbutton = ['Nama', 'Waktu', 'Pengeluaran'];
   String dropdownvalue = 'Waktu';
+  String keyword = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,7 +138,8 @@ class _listPage extends State<listPage> {
                   border: Border.all(color: Colors.grey, width: 1)),
               child: TextField(
                 onChanged: (value) {
-                  _filterList(value);
+                  keyword = value;
+                  setState(() {});
                 },
                 controller: search,
                 decoration: InputDecoration(
@@ -188,7 +190,7 @@ class _listPage extends State<listPage> {
             ),
           ),
           FutureBuilder<List<TransaksiModel>>(
-              future: databaseInstance!.getAll(),
+              future: databaseInstance!.search(keyword),
               builder: (BuildContext context,
                   AsyncSnapshot<List<TransaksiModel>> snapshot) {
                 print('HASIL : ' + snapshot.data.toString());
@@ -197,19 +199,19 @@ class _listPage extends State<listPage> {
                 } else {
                   if (snapshot.hasData) {
                     if (!doItJustOnce) {
-                      //You should define a bool like (bool doItJustOnce = false;) on your state.
+                      //    //You should define a bool like (bool doItJustOnce = false;) on your state.
                       list = snapshot.data!;
-                      filteredList = list;
+                      // filteredList = list;
                       doItJustOnce = !doItJustOnce;
-
+//
                       // setState(() {});
-                      //this line helps to do just once.
+                      //    //this line helps to do just once.
                     }
                     return SizedBox(
                       height: 450,
                       child: Expanded(
                           child: ListView.builder(
-                        itemCount: filteredList.length,
+                        itemCount: list.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -222,25 +224,23 @@ class _listPage extends State<listPage> {
                                 ),
                                 trailing: Wrap(
                                   children: [
-                                    Text(filteredList[index].createdAt!),
+                                    Text(list[index].createdAt!),
                                     IconButton(
                                         onPressed: () {
                                           showAlertDialog(
-                                              context, filteredList[index].id!);
+                                              context, list[index].id!);
                                         },
                                         icon: Icon(Icons.delete,
                                             color: Colors.red))
                                   ],
                                 ),
-                                title: Text(filteredList[index].name!),
-                                subtitle:
-                                    Text(filteredList[index].total!.toString()),
+                                title: Text(list[index].name!),
+                                subtitle: Text(list[index].total!.toString()),
                                 onTap: () {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (context) => UpdateScreen(
-                                                transaksiMmodel:
-                                                    filteredList[index],
+                                                transaksiMmodel: list[index],
                                               )))
                                       .then((value) {
                                     setState(() {});
