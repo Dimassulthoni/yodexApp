@@ -43,7 +43,10 @@ class Splashscreen extends StatelessWidget {
     return AnimatedSplashScreen(
       splash: Column(
         children: [
-          Image.asset('images/digitalent.png'),
+          Image.asset(
+            'images/wallet.png',
+            scale: 2,
+          ),
           const Text(
             'Your Daily Expends',
             style: TextStyle(
@@ -74,20 +77,27 @@ class _HomepageWidgetState extends State<HomepageWidget> {
   String batas = 'masukan limit pengeluaran';
   int intBatas = 0;
 
-  changeText() {
+  changeText() async {
     int? intBatas = int.tryParse(limit.text);
-    int? total =
-        int.tryParse('${databaseInstance!.totalPemasukan().toString()}');
-    if (intBatas! > total!) {
+    int stotal = await database.totalPemasukan();
+    // int total = int.parse(stotal);
+    print("$stotal");
+    print(stotal);
+    print(intBatas);
+    if (intBatas! > stotal) {
       setState(() {
         batas = "aman";
       });
-      return batas;
-    } else {
+    }
+    if (intBatas == stotal) {
+      setState(() {
+        batas = "pengeluaran telah mencapai limit";
+      });
+    }
+    if (intBatas < stotal) {
       setState(() {
         batas = "pengeluaran telah melebihi limit";
       });
-      return batas;
     }
   }
 
@@ -99,6 +109,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
   void initState() {
     databaseInstance = DatabaseInstance();
     initDatabase();
+    setState(() {});
     database.database();
     super.initState();
   }
@@ -217,7 +228,11 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             ],
                           ).show();
                         },
-                        icon: Icon(color: Colors.grey, Icons.add),
+                        icon: Icon(
+                          color: Colors.grey,
+                          Icons.add,
+                          fill: 1,
+                        ),
                       ))
                 ],
               )),
@@ -232,9 +247,10 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                     return Text("-");
                   } else {
                     if (snapshot.hasData) {
+                      String totall = snapshot.data.toString();
                       return Container(
                         alignment: AlignmentDirectional.center,
-                        child: Text("Rp. ${snapshot.data.toString()}",
+                        child: Text("Rp. $totall",
                             textAlign: TextAlign.center,
                             style: GoogleFonts.averiaSansLibre(
                                 color: Color.fromRGBO(255, 255, 255, 1),
@@ -281,7 +297,11 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                   child: Positioned(
                                       top: 0,
                                       left: 2.43157958984375,
-                                      child: Image.asset('images/vector.png')),
+                                      child: Icon(
+                                          Icons.account_balance_wallet_outlined,
+                                          size: 50,
+                                          color: Color.fromARGB(
+                                              156, 87, 13, 184))),
                                 )),
                           ),
                           Padding(

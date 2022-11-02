@@ -65,6 +65,8 @@ class _listPage extends State<listPage> {
     databaseInstance = DatabaseInstance();
     initDatabase();
     _refresh();
+
+    setState(() {});
     super.initState();
   }
 
@@ -198,8 +200,10 @@ class _listPage extends State<listPage> {
                       //You should define a bool like (bool doItJustOnce = false;) on your state.
                       list = snapshot.data!;
                       filteredList = list;
-                      doItJustOnce =
-                          !doItJustOnce; //this line helps to do just once.
+                      doItJustOnce = !doItJustOnce;
+
+                      // setState(() {});
+                      //this line helps to do just once.
                     }
                     return SizedBox(
                       height: 450,
@@ -256,5 +260,3 @@ class _listPage extends State<listPage> {
     ));
   }
 }
-
-void sortlist() {}
