@@ -27,31 +27,32 @@ class _listPage extends State<listPage> {
   String formattedDate =
       DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
   int _value = 1;
+  //late Future<List<TransaksiModel>> datafuture;
 
-  //void _filterList(String value) {
-  //  setState(() {
-  //    filteredList = list
-  //        .where(
-  //            (text) => text.name!.toLowerCase().contains(value.toLowerCase()))
-  //        .toList();
-  //  });
-  //}
+  void _filterList(String value) {
+    setState(() {
+      filteredList = list
+          .where(
+              (text) => text.name!.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+    });
+  }
 
   void _sortListname(String value) {
     setState(() {
-      list.sort((a, b) => a.name!.compareTo(b.name!));
+      filteredList.sort((a, b) => a.name!.compareTo(b.name!));
     });
   }
 
   void _sortListwaktu(String value) {
     setState(() {
-      list.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+      filteredList.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
     });
   }
 
   void _sortListpengeluaran(String value) {
     setState(() {
-      list.sort((a, b) => b.total!.compareTo(a.total!));
+      filteredList.sort((a, b) => b.total!.compareTo(a.total!));
     });
   }
 
@@ -64,7 +65,7 @@ class _listPage extends State<listPage> {
   void initState() {
     databaseInstance = DatabaseInstance();
     initDatabase();
-    _refresh();
+    //datafuture = databaseInstance!.getAll();
 
     setState(() {});
     super.initState();
@@ -140,6 +141,7 @@ class _listPage extends State<listPage> {
                 onChanged: (value) {
                   keyword = value;
                   setState(() {});
+                  _filterList(value);
                 },
                 controller: search,
                 decoration: InputDecoration(
@@ -176,7 +178,7 @@ class _listPage extends State<listPage> {
                   setState(() {
                     dropdownvalue = newValue!;
                     if (dropdownvalue == 'Waktu') {
-                      _sortListwaktu(dropdownvalue);
+                      _sortListname(dropdownvalue);
                     }
                     if (dropdownvalue == 'Nama') {
                       _sortListname(dropdownvalue);
@@ -199,19 +201,19 @@ class _listPage extends State<listPage> {
                 } else {
                   if (snapshot.hasData) {
                     if (!doItJustOnce) {
-                      //    //You should define a bool like (bool doItJustOnce = false;) on your state.
+                      //    //    //You should define a bool like (bool doItJustOnce = false;) on your state.
+
                       list = snapshot.data!;
-                      // filteredList = list;
+                      filteredList = list;
                       doItJustOnce = !doItJustOnce;
-//
-                      // setState(() {});
-                      //    //this line helps to do just once.
+                      //    // setState(() {});
+                      //    //    //this line helps to do just once.
                     }
                     return SizedBox(
                       height: 450,
                       child: Expanded(
                           child: ListView.builder(
-                        itemCount: list.length,
+                        itemCount: snapshot.data!.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -224,23 +226,25 @@ class _listPage extends State<listPage> {
                                 ),
                                 trailing: Wrap(
                                   children: [
-                                    Text(list[index].createdAt!),
-                                    IconButton(
-                                        onPressed: () {
-                                          showAlertDialog(
-                                              context, list[index].id!);
-                                        },
-                                        icon: Icon(Icons.delete,
-                                            color: Colors.red))
+                                    Text(filteredList[index].createdAt!),
+                                    // IconButton(
+                                    //     onPressed: () {
+                                    //       showAlertDialog(context,
+                                    //           filteredList[index].id!);
+                                    //     },
+                                    //     icon: Icon(Icons.delete,
+                                    //         color: Colors.red))
                                   ],
                                 ),
-                                title: Text(list[index].name!),
-                                subtitle: Text(list[index].total!.toString()),
+                                title: Text(filteredList[index].name!),
+                                subtitle:
+                                    Text(filteredList[index].total!.toString()),
                                 onTap: () {
                                   Navigator.of(context)
                                       .push(MaterialPageRoute(
                                           builder: (context) => UpdateScreen(
-                                                transaksiMmodel: list[index],
+                                                transaksiMmodel:
+                                                    filteredList[index],
                                               )))
                                       .then((value) {
                                     setState(() {});

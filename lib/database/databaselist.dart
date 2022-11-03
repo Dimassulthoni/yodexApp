@@ -52,6 +52,14 @@ class DatabaseInstance {
     return search;
   }
 
+  // Future<List<TransaksiModel>> sortname(String dropdownvalue) async {
+  //   List<Map<String, dynamic>> data =
+  //       await _database!.query(namaTabel, orderBy: name);
+  //   List<TransaksiModel> sort =
+  //       data.map((sort) => TransaksiModel.fromJson(sort)).toList();
+  //   return sort;
+  // }
+
   Future<int> insert(Map<String, dynamic> row) async {
     final query = await _database!.insert(namaTabel, row);
     return query;

@@ -6,7 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:yodex/database/databaselist.dart';
 import 'package:yodex/list.dart';
 import 'package:yodex/model/pengeluaran.dart';
-import 'total.dart';
 import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -186,6 +185,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                 ),
                                 TextField(
                                   //obscureText: true,
+                                  autofocus: true,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     icon: Text(
@@ -217,6 +217,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     controller1.clear();
                                     controller2.clear();
                                   });
+                                  changeText();
                                 },
                                 color: const Color.fromRGBO(50, 168, 82, 10),
                                 child: const Text(

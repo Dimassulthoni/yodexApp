@@ -41,19 +41,35 @@ class _UpdateScreenState extends State<UpdateScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.only(top: 65),
-                child: Text(
-                  'Update Pengeluaran',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Color.fromRGBO(45, 12, 87, 1),
-                      fontFamily: 'Roboto',
-                      fontSize: 34,
-                      letterSpacing: 0.4099999964237213,
-                      fontWeight: FontWeight.bold,
-                      height: 1.2058823529411764),
-                ),
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 30, bottom: 45),
+                    child: Text(
+                      'Update Pengeluaran',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Color.fromRGBO(45, 12, 87, 1),
+                          fontFamily: 'Roboto',
+                          fontSize: 27,
+                          letterSpacing: 0.4099999964237213,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2058823529411764),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topRight,
+                    padding: EdgeInsets.only(left: 77, top: 30, bottom: 45),
+                    child: IconButton(
+                      onPressed: () async {
+                        await databaseInstance
+                            .hapus(widget.transaksiMmodel.id!);
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(Icons.delete, color: Colors.red),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 40,
@@ -95,9 +111,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                           'updated_at': DateTime.now().toString()
                         });
                         Navigator.pop(context);
-                        setState(() {
-                          
-                        });
+                        setState(() {});
                       },
                       child: Text("SIMPAN", style: TextStyle(fontSize: 20))),
                 ),
