@@ -3,6 +3,7 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:yodex/database/databaselist.dart';
 import 'package:yodex/list.dart';
+import 'package:yodex/main.dart';
 import 'package:yodex/model/pengeluaran.dart';
 
 class UpdateScreen extends StatefulWidget {
@@ -64,7 +65,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
                       onPressed: () async {
                         await databaseInstance
                             .hapus(widget.transaksiMmodel.id!);
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomepageWidget()),
+                            (route) => false);
                       },
                       icon: Icon(Icons.delete, color: Colors.red),
                     ),
@@ -110,7 +115,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
                           'total': totalController.text,
                           'updated_at': DateTime.now().toString()
                         });
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomepageWidget()),
+                            (route) => false);
                         setState(() {});
                       },
                       child: Text("SIMPAN", style: TextStyle(fontSize: 20))),

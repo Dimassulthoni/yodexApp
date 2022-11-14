@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yodex/database/databaselist.dart';
 import 'package:yodex/list.dart';
@@ -75,6 +76,18 @@ class _HomepageWidgetState extends State<HomepageWidget> {
       DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
   String batas = 'masukan limit pengeluaran';
   int intBatas = 0;
+  final Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+
+  Future<String> getUserData() async {
+    final SharedPreferences sp = await _pref;
+    limit.text = sp.getString('limit')!;
+    return limit.text;
+  }
+
+  Future updateSP() async {
+    final SharedPreferences sp = await _pref;
+    sp.setString('limit', limit.text);
+  }
 
   changeText() async {
     int? intBatas = int.tryParse(limit.text);
@@ -108,6 +121,8 @@ class _HomepageWidgetState extends State<HomepageWidget> {
   void initState() {
     databaseInstance = DatabaseInstance();
     initDatabase();
+    getUserData();
+    changeText();
     setState(() {});
     database.database();
     super.initState();
@@ -353,6 +368,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     buttons: [
                                       DialogButton(
                                         onPressed: () {
+                                          updateSP();
                                           changeText();
                                           Navigator.pop(context);
                                         },

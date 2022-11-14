@@ -66,8 +66,9 @@ class _listPage extends State<listPage> {
     databaseInstance = DatabaseInstance();
     initDatabase();
     //datafuture = databaseInstance!.getAll();
-
-    setState(() {});
+    setState(() {
+      filteredList;
+    });
     super.initState();
   }
 
@@ -213,7 +214,7 @@ class _listPage extends State<listPage> {
                       height: 450,
                       child: Expanded(
                           child: ListView.builder(
-                        itemCount: snapshot.data!.length,
+                        itemCount: filteredList.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                             decoration: BoxDecoration(
