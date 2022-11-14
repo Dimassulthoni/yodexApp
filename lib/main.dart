@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,6 +77,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
       DateFormat('HH:mm E, d MMM yyyy').format(DateTime.now());
   String batas = 'masukan limit pengeluaran';
   int intBatas = 0;
+  bool doItJustOnce = false;
   final Future<SharedPreferences> _pref = SharedPreferences.getInstance();
 
   Future<String> getUserData() async {
@@ -180,7 +182,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                   fontWeight: FontWeight.normal,
                                   color: Color.fromARGB(156, 81, 3, 184))))),
                   Container(
-                      padding: EdgeInsets.only(left: 120),
+                      padding: EdgeInsets.only(left: 70),
                       child: IconButton(
                         onPressed: () {
                           Alert(
@@ -189,6 +191,7 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                             content: Column(
                               children: <Widget>[
                                 TextField(
+                                  autofocus: true,
                                   decoration: InputDecoration(
                                     icon: Icon(
                                       Icons.move_to_inbox_rounded,
@@ -200,7 +203,9 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                 ),
                                 TextField(
                                   //obscureText: true,
-                                  autofocus: true,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     icon: Text(
@@ -310,14 +315,10 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                       Radius.elliptical(104, 104)),
                                 ),
                                 child: Center(
-                                  child: Positioned(
-                                      top: 0,
-                                      left: 2.43157958984375,
-                                      child: Icon(
-                                          Icons.account_balance_wallet_outlined,
-                                          size: 50,
-                                          color: Color.fromARGB(
-                                              156, 87, 13, 184))),
+                                  child: Icon(
+                                      Icons.account_balance_wallet_outlined,
+                                      size: 50,
+                                      color: Color.fromARGB(156, 87, 13, 184)),
                                 )),
                           ),
                           Padding(
@@ -329,7 +330,31 @@ class _HomepageWidgetState extends State<HomepageWidget> {
                                     color: HexColor("2D0C57"), fontSize: 34),
                               )),
                           Container(
-                              padding: EdgeInsets.all(20), child: Text(batas)),
+                            padding: EdgeInsets.all(20),
+                            child: FutureBuilder(
+                                future: updateSP(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Text("-");
+                                  } else {
+                                    if (snapshot.hasData) {
+                                      return Text(batas);
+                                    } else {
+                                      if (!doItJustOnce) {
+                                        //    //    //You should define a bool like (bool doItJustOnce = false;) on your state.
+
+                                        changeText();
+                                        doItJustOnce = !doItJustOnce;
+                                        //    // setState(() {});
+                                        //    //    //this line helps to do just once.
+                                      }
+                                      return Text(batas);
+                                    }
+                                  }
+                                }),
+                            //Text(batas)
+                          ),
                           const SizedBox(
                             height: 60,
                           ),

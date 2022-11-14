@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:yodex/database/databaselist.dart';
 import 'package:yodex/model/pengeluaran.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:yodex/update_screen.dart';
 
 class listPage extends StatefulWidget {
@@ -47,6 +46,8 @@ class _listPage extends State<listPage> {
   void _sortListwaktu(String value) {
     setState(() {
       filteredList.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+      //filteredList.sort();
+      //filteredList.reversed;
     });
   }
 
@@ -155,7 +156,8 @@ class _listPage extends State<listPage> {
                       icon: Icon(Icons.clear),
                     ),
                     hintText: ('search'),
-                    border: InputBorder.none),
+                    border: InputBorder.none,
+                    focusedBorder: InputBorder.none),
               )),
           Container(
             alignment: AlignmentDirectional.centerEnd,
@@ -179,7 +181,7 @@ class _listPage extends State<listPage> {
                   setState(() {
                     dropdownvalue = newValue!;
                     if (dropdownvalue == 'Waktu') {
-                      _sortListname(dropdownvalue);
+                      _sortListwaktu(dropdownvalue);
                     }
                     if (dropdownvalue == 'Nama') {
                       _sortListname(dropdownvalue);
@@ -212,48 +214,53 @@ class _listPage extends State<listPage> {
                     }
                     return SizedBox(
                       height: 450,
-                      child: Expanded(
-                          child: ListView.builder(
-                        itemCount: filteredList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                                border: Border(bottom: BorderSide()),
-                                color: Color.fromARGB(255, 221, 221, 221)),
-                            child: ListTile(
-                                leading: Icon(
-                                  Icons.move_to_inbox_rounded,
-                                  color: Color.fromARGB(156, 87, 13, 184),
-                                ),
-                                trailing: Wrap(
-                                  children: [
-                                    Text(filteredList[index].createdAt!),
-                                    // IconButton(
-                                    //     onPressed: () {
-                                    //       showAlertDialog(context,
-                                    //           filteredList[index].id!);
-                                    //     },
-                                    //     icon: Icon(Icons.delete,
-                                    //         color: Colors.red))
-                                  ],
-                                ),
-                                title: Text(filteredList[index].name!),
-                                subtitle:
-                                    Text(filteredList[index].total!.toString()),
-                                onTap: () {
-                                  Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) => UpdateScreen(
-                                                transaksiMmodel:
-                                                    filteredList[index],
-                                              )))
-                                      .then((value) {
-                                    setState(() {});
-                                  });
-                                }),
-                          );
-                        },
-                      )),
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: ListView.builder(
+                            itemCount: filteredList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                    border: Border(bottom: BorderSide()),
+                                    color: Color.fromARGB(255, 221, 221, 221)),
+                                child: ListTile(
+                                    leading: Icon(
+                                      Icons.move_to_inbox_rounded,
+                                      color: Color.fromARGB(156, 87, 13, 184),
+                                    ),
+                                    trailing: Wrap(
+                                      children: [
+                                        Text(filteredList[index].createdAt!),
+                                        // IconButton(
+                                        //     onPressed: () {
+                                        //       showAlertDialog(context,
+                                        //           filteredList[index].id!);
+                                        //     },
+                                        //     icon: Icon(Icons.delete,
+                                        //         color: Colors.red))
+                                      ],
+                                    ),
+                                    title: Text(filteredList[index].name!),
+                                    subtitle: Text(
+                                        filteredList[index].total!.toString()),
+                                    onTap: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UpdateScreen(
+                                                    transaksiMmodel:
+                                                        filteredList[index],
+                                                  )))
+                                          .then((value) {
+                                        setState(() {});
+                                      });
+                                    }),
+                              );
+                            },
+                          )),
+                        ],
+                      ),
                     );
                   } else {
                     return Text("Tidak ada data");

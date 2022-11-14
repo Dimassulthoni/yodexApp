@@ -60,7 +60,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                   ),
                   Container(
                     alignment: Alignment.topRight,
-                    padding: EdgeInsets.only(left: 77, top: 30, bottom: 45),
+                    padding: EdgeInsets.only(left: 26, top: 30, bottom: 45),
                     child: IconButton(
                       onPressed: () async {
                         await databaseInstance
